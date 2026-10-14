@@ -1,4 +1,4 @@
-package main.java.com.WAR.BankAPI.controllers;
+package com.WAR.BankAPI.controllers;
 
 public class AccountController {
 }
