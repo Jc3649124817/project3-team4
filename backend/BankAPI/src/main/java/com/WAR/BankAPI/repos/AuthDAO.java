@@ -1,4 +1,4 @@
-package main.java.com.WAR.BankAPI.repos;
+package com.WAR.BankAPI.repos;
 
 public interface AuthDAO {
 }

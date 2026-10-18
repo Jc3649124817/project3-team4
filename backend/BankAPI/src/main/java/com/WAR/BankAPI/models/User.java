@@ -21,7 +21,7 @@ public class User {
 
     //@Column - this is not needed to make a field a column!!!
         //BUT, we need it to apply constraints
-    
+
     private String firstName;
     private String lastName;
     private String email;
