@@ -27,17 +27,18 @@ public class AccountService {
     public List<Account> createDefaultAccounts(User user) {
         requireUser(user);
 
-        boolean hasChecking = accountDAO.existsByUserAndAccountType(
+        Boolean hasChecking = accountDAO.existsByUserAndAccountType(
             user,
             AccountType.CHECKING
         );
 
-        boolean hasSavings = accountDAO.existsByUserAndAccountType(
+        Boolean hasSavings = accountDAO.existsByUserAndAccountType(
             user,
             AccountType.SAVINGS
         );
 
-        if (hasChecking || hasSavings) {
+        if (Boolean.TRUE.equals(hasChecking)
+                || Boolean.TRUE.equals(hasSavings)) {
             throw new IllegalStateException(
                 "Default accounts already exist for this user."
             );
@@ -52,21 +53,25 @@ public class AccountService {
     @Transactional(readOnly = true)
     public List<Account> getAccountsByUser(User user) {
         requireUser(user);
+
         return accountDAO.findByUser(user);
     }
 
     // Internal lookup: this does not verify who owns the account.
     @Transactional(readOnly = true)
-    public Account getAccountByAccountNumber(long accountNumber) {
+    public Account getAccountByAccountNumber(Long accountNumber) {
+        requireAccountNumber(accountNumber);
+
         return accountDAO.findById(accountNumber)
             .orElseThrow(() ->
                 new IllegalArgumentException("Account not found.")
             );
     }
 
-    // Lookup for requests that must be restricted to the account owner.
+    // Lookup restricted to the supplied account owner.
     @Transactional(readOnly = true)
-    public Account getAccountForUser(long accountNumber, User user) {
+    public Account getAccountForUser(Long accountNumber, User user) {
+        requireAccountNumber(accountNumber);
         requireUser(user);
 
         return accountDAO.findByAccountNumberAndUser(accountNumber, user)
@@ -81,8 +86,10 @@ public class AccountService {
     // Positive amounts add money; negative amounts subtract money.
     @Transactional(propagation = Propagation.MANDATORY)
     public void updateAccountBalance(
-            long accountNumber,
+            Long accountNumber,
             BigDecimal amount) {
+
+        requireAccountNumber(accountNumber);
 
         if (amount == null || amount.signum() == 0) {
             throw new IllegalArgumentException(
@@ -131,5 +138,18 @@ public class AccountService {
             throw new IllegalArgumentException("User is required.");
         }
     }
-}
 
+    private static void requireAccountNumber(Long accountNumber) {
+        if (accountNumber == null) {
+            throw new IllegalArgumentException(
+                "Account number is required."
+            );
+        }
+
+        if (accountNumber <= 0L) {
+            throw new IllegalArgumentException(
+                "Account number must be greater than zero."
+            );
+        }
+    }
+}
