@@ -1,4 +1,4 @@
-package main.java.com.WAR.BankAPI.services;
+package com.WAR.BankAPI.services;
 
 public class AuthService {
 }
