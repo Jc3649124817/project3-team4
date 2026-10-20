@@ -9,9 +9,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 @SpringBootApplication
-//@ComponentScan("com.WAR")
-//@EntityScan("com.WAR.BankAPI.models")
-//@EnableJpaRepositories("com.WAR.BankAPI.repos")
 @CrossOrigin(origins = {"http://localhost:5173", "http://localhost:4200"}, allowedHeaders = "*")
 public class BankApiApplication {
 
