@@ -29,6 +29,7 @@ public class User {
     private String username;
     private String password;
 
+    private String role;
 
     //boilerplate---------------------------------
 
@@ -40,12 +41,20 @@ public class User {
     public User(String firstName, String lastName, String email,
                 String phoneNumber, String username, String password
     ) {
+        this(firstName, lastName, email, phoneNumber, username, password, "user");
+    }
+
+    public User(String firstName, String lastName, String email,
+                String phoneNumber, String username, String password,
+                String role
+    ) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.username = username;
         this.password = password;
+        this.role = role;
     }
 
     public UUID getUserId() {
@@ -100,9 +109,17 @@ public class User {
         this.password = password;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     @Override
     public String toString() {
         return "User [userId=" + userId + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email
-                + ", phoneNumber=" + phoneNumber + ", username=" + username + "]";
+                + ", phoneNumber=" + phoneNumber + ", username=" + username + ", role=" + role + "]";
     }
 }

@@ -1,4 +1,75 @@
-package main.java.com.WAR.BankAPI.services;
+package com.WAR.BankAPI.services;
 
+//Remember that Service classes are for business logic -
+    //data formatting, input validation, etc
+    //It makes sure everything looks good before going to the DB or back to the user
+
+import com.WAR.BankAPI.models.LoginDTO;
+import com.WAR.BankAPI.models.User;
+import com.WAR.BankAPI.repos.UserDAO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service //1 of the 4 stereotype annotations - makes this Class a bean
 public class AuthService {
+
+    //The controllers call services, which call the DAOs (data access objects)
+
+    //The Service needs the DAO. They're both beans, so let's CONSTRUCTOR INJECT
+    private final UserDAO userDAO;
+    //We also need the UserService to find users by username
+    private final UserService userService;
+
+    @Autowired
+    public AuthService(UserDAO userDAO, UserService userService) {
+        this.userDAO = userDAO;
+        this.userService = userService;
+    }
+
+    //Login - calls the UserDAO's findByUsernameAndPassword()
+    public User login(LoginDTO loginDTO){
+
+        //TODO: yes we should probably do some input validations
+
+        return userDAO.findByUsernameAndPassword(
+                loginDTO.getUsername(), loginDTO.getPassword()
+        ).orElseThrow(() -> new IllegalArgumentException("Login Credentials Invalid"));
+
+    }
+
+    //Insert User - calls the UserDAO's save() method
+    public User insertUser(User newUser){
+
+        //Some basic input validation (make sure the user fields are valid)
+        //TODO: abstract this validation logic out to a dedicated method
+
+        //Check if a valid username was passed in
+        if(newUser.getUsername().isBlank()){
+            throw new IllegalArgumentException("Username must be present!");
+        }
+
+        //Check if the role is valid ("user" or "admin")
+        if(!newUser.getRole().equals("user")
+                && !newUser.getRole().equals("admin")){
+            throw new IllegalArgumentException("Invalid Role!");
+        }
+
+        //Check if username already exists
+        //Using our custom UserDAO method findByUsername()
+        if(userService.findByUsername(newUser.getUsername()).isPresent()){
+            throw new IllegalArgumentException("Username taken!");
+        }
+
+
+        //save() is used for inserts AND updates
+            //if the ID doesn't exist, it inserts a new record
+            //if the ID DOES exist, it updates it
+        return userDAO.save(newUser);
+
+        //TODO: maybe strip or obscure the password before sending it back
+            //NOTE: we did this in the UserService in getAllUsers()
+
+    }
+
+
 }

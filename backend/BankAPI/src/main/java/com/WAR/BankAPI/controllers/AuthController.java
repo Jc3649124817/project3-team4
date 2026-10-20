@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 //All requests with /auth will get routed here
 @RequestMapping("/auth")
 //Allow CORS requests from React and Angular frontends
-// @CrossOrigin(origins = {"http://localhost:5173", "http://localhost:4200"}, allowedHeaders = "*")
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:4200"}, allowedHeaders = "*")
 public class AuthController {
 
     //Inject the UserService with Constructor Injection
