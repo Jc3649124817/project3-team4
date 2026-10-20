@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.UUID;
 
 //This Class is responsible for generating and validating JWTs
 
@@ -18,7 +19,7 @@ public class JwtUtil {
     private final long EXPIRATION = 1000 * 60 * 60 * 8; // 8 hours
 
     // Generates a signed JWT containing the username, role, and userId as claims
-    public String generateToken(String username, String role, int userId) {
+    public String generateToken(String username, String role, UUID userId) {
         return Jwts.builder()
                 .setSubject(username) //who the user is
                 .claim("role", "ROLE_" + role) //claims are just other pieces of info
