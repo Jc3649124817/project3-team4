@@ -41,9 +41,9 @@ public class AuthController {
 
         //Now we can make and return the JWT!
         String token = jwtUtil.generateToken(
-                loggedInUser.getUsername(),
-                loggedInUser.getRole(),
-                loggedInUser.getUserId()
+            loggedInUser.getUsername(),
+            loggedInUser.getRole(),
+            loggedInUser.getUserId()
         );
 
         System.out.println("Token: " + token);

@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Column;
 
 import java.util.UUID;
 
@@ -22,11 +23,22 @@ public class User {
     //@Column - this is not needed to make a field a column!!!
         //BUT, we need it to apply constraints
 
+    @Column(nullable = false)
     private String firstName;
+
+    @Column(nullable = false)
     private String lastName;
+
+    @Column(nullable = false)
     private String email;
+
+    @Column(nullable = false)
     private String phoneNumber;
+
+    @Column(nullable = false)
     private String username;
+
+    @Column(nullable = false)
     private String password;
 
     private String role;

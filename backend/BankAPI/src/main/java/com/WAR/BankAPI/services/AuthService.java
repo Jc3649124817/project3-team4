@@ -29,8 +29,19 @@ public class AuthService {
     //Login - calls the UserDAO's findByUsernameAndPassword()
     public User login(LoginDTO loginDTO){
 
-        //TODO: yes we should probably do some input validations
+        // Basic input validation
+        String inputtedUsername = loginDTO.getUsername();
+        String inputtedPassword = loginDTO.getPassword();
 
+        if (inputtedUsername == null || inputtedUsername.trim().isBlank()) {
+            throw new IllegalArgumentException("Username cannot be blank");
+        }
+        if (inputtedPassword == null || inputtedPassword.isBlank()) {
+            throw new IllegalArgumentException("Pasword cannot be blank");
+        }
+ 
+        // IF the username-password pair exists, return it.
+        // Otherwise, throw an exception saying the credentials are invalid
         return userDAO.findByUsernameAndPassword(
                 loginDTO.getUsername(), loginDTO.getPassword()
         ).orElseThrow(() -> new IllegalArgumentException("Login Credentials Invalid"));
