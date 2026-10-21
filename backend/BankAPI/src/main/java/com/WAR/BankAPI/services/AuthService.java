@@ -1,6 +1,7 @@
 package com.WAR.BankAPI.services;
 
 import com.WAR.BankAPI.DTOs.LoginDTO;
+import com.WAR.BankAPI.DTOs.UserDTO;
 import com.WAR.BankAPI.models.User;
 import com.WAR.BankAPI.repos.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,7 @@ public class AuthService {
     }
 
     //Insert User - calls the UserDAO's save() method
-    public User insertUser(User newUser){
+    public User insertUser(UserDTO newUser){
 
         //Some basic input validation (make sure the user fields are valid)
         //TODO: abstract this validation logic out to a dedicated method
@@ -67,11 +68,13 @@ public class AuthService {
             throw new IllegalArgumentException("Username taken!");
         }
 
+        // Create a User object from the inputted UserDTO
+        User input = new User(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), newUser.getPhoneNumber(), newUser.getUsername(), newUser.getPassword(), newUser.getRole());
 
         //save() is used for inserts AND updates
             //if the ID doesn't exist, it inserts a new record
             //if the ID DOES exist, it updates it
-        return userDAO.save(newUser);
+        return userDAO.save(input);
 
         //TODO: maybe strip or obscure the password before sending it back
             //NOTE: we did this in the UserService in getAllUsers()

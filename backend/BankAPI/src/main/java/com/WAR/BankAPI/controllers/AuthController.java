@@ -1,6 +1,7 @@
 package com.WAR.BankAPI.controllers;
 
 import com.WAR.BankAPI.DTOs.LoginDTO;
+import com.WAR.BankAPI.DTOs.UserDTO;
 import com.WAR.BankAPI.jwt.JwtUtil;
 import com.WAR.BankAPI.models.User;
 import com.WAR.BankAPI.services.AuthService;
@@ -54,7 +55,7 @@ public class AuthController {
 
     //Register User (POST Requests to /auth/register will get routed here)
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody User newUser){
+    public ResponseEntity<User> registerUser(@RequestBody UserDTO newUser){
 
         //Send the newUser to the Service to get processed and persisted
         User createdUser = authService.insertUser(newUser);
