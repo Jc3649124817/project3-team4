@@ -342,6 +342,52 @@ Just a numerical parameter, ie. numTransactions = 5
 | `401 Unauthorized` | User is not logged in.               |
 | `403 Forbidden `   | Transactions don't belong to user.   |
 
+
+## 10. Update User
+
+### `UpdateUser()`
+
+Updates the information of the currently authenticated user. Users can update their first name, last name, phone number, email, and password. Only the fields provided for update are changed; omitted fields remain unchanged.
+
+**Request Body:**
+
+```json
+{
+  "FirstName": "John",
+  "LastName": "Smith",
+  "Email": "john.smith@example.com",
+  "PhoneNumber": "201-123-4567",
+  "Password": "newPassword123",
+  "Password2": "newPassword123"
+}
+```
+
+At least one field must be provided. `Password2` is required when changing the password and must match `Password`.
+
+**Success Response:**
+
+```json
+{
+  "FirstName": "John",
+  "LastName": "Smith",
+  "Email": "john.smith@example.com",
+  "PhoneNumber": "201-123-4567",
+  "Username": "johnsmith"
+}
+```
+
+**Responses:**
+
+| Status | Description |
+|---|---|
+| `200 OK` | User information successfully updated. |
+| `400 Bad Request` | Invalid email syntax, passwords do not match, or no valid fields provided. |
+| `401 Unauthorized` | User is not logged in. |
+| `404 Not Found` | User not found. |
+| `409 Conflict` | Email address is already in use by another user. |
+
+---
+
 ---
 
 # Page-to-API Mapping
@@ -368,7 +414,6 @@ Creates a new user account.
 **Purpose:**
 
 Authenticates the user and retrieves their user information after a successful login.
-
 
 ---
 
@@ -438,22 +483,48 @@ Authenticates the user and retrieves their user information after a successful l
 | `404 Not Found`   | Resource does not exist           | User not found                                                     |
 | `501 Not Implemented` | Scenario not handled           | Returned by the mock layer for any unrecognized input              |
 
+## Edit Profile Page
+
+**Required API Calls:**
+
+- `GetUser()`
+- `UpdateUser()`
+
+**Purpose:**
+
+Retrieves the current user's information and allows the user to update their profile information and password.
+
+**Information Displayed:**
+
+- First name
+- Last name
+- Email
+- Phone number
+
+**Actions:**
+
+- Update first name
+- Update last name
+- Update phone number
+- Update email
+- Change password
+
 ---
 
 # API Endpoint Summary
 
-| Endpoint                  | Mock Service Method                    | Purpose                                               |
-|---------------------------|----------------------------------------|-------------------------------------------------------|
-| `RegisterUser()`          | `UserService.register`                 | Register a new user                                   |
-| `LogInUser()`             | `UserService.logIn`                    | Authenticate a user                                   |
-| `GetUser()`               | `UserService.getUser`                  | Retrieve the logged-in user's information             |
-| `PutAccounts()`           | `AccountService.putAccounts`           | Create the user's checking and savings accounts       |
-| `GetAccountsByUsername()` | `AccountService.getAccountsByUsername` | Retrieve all accounts belonging to the logged-in user |
-| `GetAccountByAccountId()` | `AccountService.getAccountByAccountId` | Retrieve a specific account                           |
-| `UpdateAccountBalances()` | `AccountService.updateAccountBalances` | Updates balances after executing transaction          |
-| `PutTransaction()`        | `TransactionService.putTransaction`    | Create a new transaction, only used internally        |
-| `GetTransactions()`       | `TransactionService.getTransactions`   | Retrieve the logged-in user's transactions            |
-
+| Endpoint                  | Mock Service Method                    | Purpose                                                     |
+|---------------------------|----------------------------------------|-------------------------------------------------------------|
+| `RegisterUser()`          | `UserService.register`                 | Register a new user                                         |
+| `LogInUser()`             | `UserService.logIn`                    | Authenticate a user                                         |
+| `GetUser()`               | `UserService.getUser`                  | Retrieve the logged-in user's information                   |
+| `PutAccounts()`           | `AccountService.putAccounts`           | Create the user's checking and savings accounts             |
+| `GetAccountsByUsername()` | `AccountService.getAccountsByUsername` | Retrieve all accounts belonging to the logged-in user       |
+| `GetAccountByAccountId()` | `AccountService.getAccountByAccountId` | Retrieve a specific account                                 |
+| `UpdateAccountBalances()` | `AccountService.updateAccountBalances` | Updates balances after executing transaction                |
+| `PutTransaction()`        | `TransactionService.putTransaction`    | Create a new transaction, only used internally              |
+| `GetTransactions()`       | `TransactionService.getTransactions`   | Retrieve the logged-in user's transactions                  |
+| `UpdateUser()`            | `UserService.updateUser`               | Update the logged-in user's profile information or password |
 ---
 
 # Mock Scenario Codes
@@ -484,3 +555,8 @@ The mock service layer takes a numeric `input` that selects which response to re
 | `getTransactions`       | `1`   | 200    | Transaction list returned                      |
 |                         | `0`   | 401    | User is not authenticated                      |
 |                         | `-1`  | 403    | Transactions belong to another user or account |
+| `updateUser`            | `1`   | 200    | User information successfully updated          |
+|                         | `0`   | 400    | Invalid email or passwords do not match        |
+|                         |       | 401    | User is not authenticated                      |
+|                         |       | 404    | User not found                                 |
+|                         |       | 409    | Email address already in use                   |
