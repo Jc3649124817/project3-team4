@@ -36,7 +36,7 @@ public class TransactionServiceTest {
     private Transaction transaction(int id, String type, String amount) {
         Transaction t = new Transaction();
         t.setTransactionId(id);
-        t.setType(type);
+        t.setTransactionType(type);
         t.setAmount(new BigDecimal(amount));
         t.setOriginId(1L);
         t.setDestinationId(2L);
@@ -66,7 +66,7 @@ public class TransactionServiceTest {
     void testReturnsTransactionDTOs() {
         Transaction t = new Transaction();
         t.setTransactionId(1);
-        t.setType("deposit");
+        t.setTransactionType("deposit");
         t.setAmount(new BigDecimal("100.00"));
 
 
@@ -86,7 +86,7 @@ public class TransactionServiceTest {
     void testReturnsFewerTransactionDTOs() {
         Transaction t = new Transaction();
         t.setTransactionId(1);
-        t.setType("deposit");
+        t.setTransactionType("deposit");
         t.setAmount(new BigDecimal("100.00"));
 
 
