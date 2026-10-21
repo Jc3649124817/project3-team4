@@ -1,10 +1,6 @@
 package com.WAR.BankAPI.services;
 
-//Remember that Service classes are for business logic -
-    //data formatting, input validation, etc
-    //It makes sure everything looks good before going to the DB or back to the user
-
-import com.WAR.BankAPI.models.LoginDTO;
+import com.WAR.BankAPI.DTOs.LoginDTO;
 import com.WAR.BankAPI.models.User;
 import com.WAR.BankAPI.repos.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;

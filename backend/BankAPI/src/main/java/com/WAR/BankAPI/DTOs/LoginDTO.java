@@ -1,4 +1,4 @@
-package com.WAR.BankAPI.models;
+package com.WAR.BankAPI.DTOs;
 
 /*Remember a DTO is a Data Transfer Object - it helps us move certain data around
 

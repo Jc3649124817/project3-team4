@@ -1,7 +1,7 @@
 package com.WAR.BankAPI.controllers;
 
+import com.WAR.BankAPI.DTOs.LoginDTO;
 import com.WAR.BankAPI.jwt.JwtUtil;
-import com.WAR.BankAPI.models.LoginDTO;
 import com.WAR.BankAPI.models.User;
 import com.WAR.BankAPI.services.AuthService;
 import jakarta.servlet.http.HttpSession;

@@ -7,8 +7,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
 
-import java.util.UUID;
-
 @Entity //This tells Spring Data that this Class is meant to be a DB entity (DB table)
 @Table(name = "users") //This helps us set table configs like the name
 public class User {
@@ -17,8 +15,8 @@ public class User {
     //Spring Data doesn't play nice with snake_case, and the errors will be super vague
 
     @Id //Sets this field as the Primary Key (PK)
-    @GeneratedValue(strategy = GenerationType.UUID) //This is what makes the PK autoincrement
-    private UUID userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //This is what makes the PK autoincrement
+    private Integer userId;
 
     //@Column - this is not needed to make a field a column!!!
         //BUT, we need it to apply constraints
@@ -69,7 +67,7 @@ public class User {
         this.role = role;
     }
 
-    public UUID getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
