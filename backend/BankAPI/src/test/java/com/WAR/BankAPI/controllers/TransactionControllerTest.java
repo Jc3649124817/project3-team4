@@ -1,7 +1,7 @@
 package com.WAR.BankAPI.controllers;
 
 import com.WAR.BankAPI.exceptions.InvalidRequestException;
-import com.WAR.BankAPI.models.TransactionDTO;
+import com.WAR.BankAPI.DTOs.TransactionDTO;
 import com.WAR.BankAPI.services.TransactionService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ class TransactionControllerTest {
     private TransactionService transactionService;
 
     private TransactionDTO transactionDTO(int id, String type, String amount) {
-        TransactionDTO tDTO = new TransactionDTO(type, id, new BigDecimal(amount),
+        TransactionDTO tDTO = new TransactionDTO(id, type, new BigDecimal(amount),
                 1L, 2L, Instant.parse("2026-10-01T12:00:00Z"));
         return tDTO;
     }
