@@ -49,7 +49,6 @@ public class AuthService {
     public User insertUser(UserDTO newUser){
 
         //Some basic input validation (make sure the user fields are valid)
-        //TODO: abstract this validation logic out to a dedicated method
 
         //Check if a valid username was passed in
         if(newUser.getUsername().isBlank()){
@@ -69,9 +68,5 @@ public class AuthService {
             //if the ID doesn't exist, it inserts a new record
             //if the ID DOES exist, it updates it
         return userDAO.save(input);
-
-        //TODO: maybe strip or obscure the password before sending it back
-            //NOTE: we did this in the UserService in getAllUsers()
-
     }
 }

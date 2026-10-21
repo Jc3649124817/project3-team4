@@ -1,35 +1,36 @@
-import { UserService } from "../service/UserService.ts";
-import type {
-    APIResponse,
-    LoginRequest,
-    RegisterRequest,
-    User,
-} from "../models/models.ts";
+import type { RegisterRequest, LoginRequest } from "../models/models";
 
-// The auth service is the one place that talks to UserService. It returns the
-// APIResponse as-is, so callers check `data` / `error` / `status` directly.
-//
-// --- MOCK ADAPTERS ---------------------------------------------------------
-// UserService picks its response from a number, so the credential checks below
-// translate real input into that number. When UserService takes real
-// arguments, delete the checks and forward the request objects instead.
-// ---------------------------------------------------------------------------
+const BASE_URL = 'http://localhost:8080/auth';
 
-export function login({ Username, Password }: LoginRequest): Promise<APIResponse<User>> {
-    const valid = Username.trim() === "johnsmith" && Password === "apple123";
-    return UserService.logIn(valid ? 1 : 0);
-}
+let token: string = '';
+let role: string = '';
 
-export function register(request: RegisterRequest): Promise<APIResponse<User>> {
-    if (request.Password !== request.Password2) return UserService.register(0); // passwords differ
-    if (!request.Email.includes("@")) return UserService.register(-1);          // invalid email
-    return UserService.register(1);
-}
+export const setToken = (t: string) => {
+  token = t;
+};
 
-/** Checks whether the previously signed-in user still exists. */
-export function getCurrentUser(storedUsername: string): Promise<APIResponse<User>> {
-    return UserService.getUser(storedUsername ? 1 : 0);
-}
+export const getToken = () => token;
+export const getRole = () => role;
+
+export const login = async (request : LoginRequest): Promise<string> => {
+  const res = await fetch(`${BASE_URL}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(request)
+  });
+  if (!res.ok) throw new Error('Invalid credentials');
+  return res.text();
+};
+
+export const register = async (request : RegisterRequest): Promise<any> => {
+  const res = await fetch(`${BASE_URL}/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(request)
+  });
+  if (!res.ok) throw new Error('Registration failed');
+  return res.json();
+};
 
 export async function logout(): Promise<void> {
     // No UserService.logout yet. A real backend would invalidate the session here.

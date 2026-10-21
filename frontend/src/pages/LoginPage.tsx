@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import { Input } from '../components/Input.tsx'; // Adjust the import path based on your file structure
 import { Redirect } from '../components/Redirect.tsx'
-import { UserService } from '../service/UserService'
 import type { User } from '../models/models'
 import { type LoginError, falseLogin } from '../utils/validateLogin.ts'
-import { useAuth } from '../hooks/useAuth.tsx';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../components/ToastProvider';
+import { login, setToken } from '../hooks/authService.tsx';
 
 // to be replaced with actual login content
 export function LoginPage() {
@@ -39,7 +38,6 @@ export function LoginPage() {
 }
 
 function LoginForm() {
-  const {login} = useAuth();
   const navigate = useNavigate();
   const showToast = useToast();
   const [username, setUsername] = useState('');
@@ -49,6 +47,7 @@ function LoginForm() {
   const [loginErrors, setLoginErrors] = useState<LoginError | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
 
+  /*
   useEffect(() => {
     let active = true;
 
@@ -76,6 +75,7 @@ function LoginForm() {
       active = false;
     };
   }, []);
+  */
 
   const handleSubmit = async (e : React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -94,15 +94,14 @@ function LoginForm() {
       setError("Please fill out all required fields.");
       return; 
     }
-
-    const status = await login({Username: currentUsername, Password: currentPassword});
-    if (status) {
-      setError("");
-      console.log("Submitted: ", username, password);
+    
+    try {
+      const token = await login({"Username" : username, "Password" : password});
+      setToken(token);
       showToast('success', 'Login success!');
       navigate('/dashboard');
-    } else {
-      showToast('danger', "Authentication failed");
+    } catch {
+      showToast('danger', 'Authentication failed');
     }
   }
 
