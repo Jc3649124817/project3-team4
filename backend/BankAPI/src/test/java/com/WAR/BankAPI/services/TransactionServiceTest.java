@@ -2,7 +2,7 @@ package com.WAR.BankAPI.services;
 
 import com.WAR.BankAPI.exceptions.InvalidRequestException;
 import com.WAR.BankAPI.models.Transaction;
-import com.WAR.BankAPI.models.TransactionDTO;
+import com.WAR.BankAPI.DTOs.TransactionDTO;
 import com.WAR.BankAPI.repos.TransactionDAO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

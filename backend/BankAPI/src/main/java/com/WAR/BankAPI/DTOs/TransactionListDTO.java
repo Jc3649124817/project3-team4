@@ -1,4 +1,4 @@
-package com.WAR.BankAPI.models;
+package com.WAR.BankAPI.DTOs;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

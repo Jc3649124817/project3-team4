@@ -1,6 +1,7 @@
-package com.WAR.BankAPI.models;
+package com.WAR.BankAPI.DTOs;
 
 
+import com.WAR.BankAPI.models.Transaction;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;

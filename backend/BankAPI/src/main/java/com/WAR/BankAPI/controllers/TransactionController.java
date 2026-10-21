@@ -1,5 +1,7 @@
 package com.WAR.BankAPI.controllers;
 
+import com.WAR.BankAPI.DTOs.TransactionDTO;
+import com.WAR.BankAPI.DTOs.TransactionListDTO;
 import com.WAR.BankAPI.models.*;
 import com.WAR.BankAPI.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
