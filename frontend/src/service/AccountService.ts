@@ -6,15 +6,12 @@ const delay = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 const randomDelay = (min = 500, max = 800) =>
     delay(Math.floor(Math.random() * (max - min + 1)) + min);
 
-
-
 export const MOCK_ACCOUNTS: AccountList = {
     "Accounts": [
         {"AccountNumber": 1123456789, "AccountType": "Checking", "Balance": 1000.00},
         {"AccountNumber": 9876543211, "AccountType": "Savings", "Balance": 20000.00}
     ]
 };
-
 
 export class AccountService {
 
@@ -86,7 +83,6 @@ export class AccountService {
                 status: 501,
             }
         }
-
     }
 
     static async putAccounts(input : number): Promise<APIResponse<AccountList>>{
@@ -111,7 +107,6 @@ export class AccountService {
             };
         }
     }
-
 
     static async getAccountByAccountID(input: number, accountNumber: number): Promise<APIResponse<Account>> {
         await randomDelay();
@@ -146,7 +141,6 @@ export class AccountService {
         }
     };
 
-
     static async getAccountsByUsername(input: number): Promise<APIResponse<AccountList>> {
         await randomDelay();
         if(input === 1){
@@ -177,6 +171,4 @@ export class AccountService {
             };
         }
     };
-
-
 }

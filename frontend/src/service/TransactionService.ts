@@ -49,7 +49,6 @@ export const MOCK_TRANSACTIONS: TransactionList = {
     ]
 };
 
-
 export class TransactionService {
     static async putTransaction(input: number,newTransaction :NewTransaction ): Promise<APIResponse<Transaction>> {
         await randomDelay();
@@ -95,8 +94,6 @@ export class TransactionService {
 
     };
 
-
-
     static async getTransactions(input: number, numTransactions: number = 5): Promise<APIResponse<TransactionList>> {
         await randomDelay();
         if(numTransactions > MOCK_TRANSACTIONS.Transactions.length){
@@ -134,9 +131,4 @@ export class TransactionService {
             };
         }
     };
-
-
-
-
-
 }

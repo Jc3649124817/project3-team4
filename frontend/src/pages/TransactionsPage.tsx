@@ -60,7 +60,6 @@ export function TransactionsPage() {
     showToast('success', `${request.TransactionType} of ${new Intl.NumberFormat('en-US', {
       style: 'currency', currency: 'USD',
     }).format(request.Amount)} completed successfully.`);
-
   }
 
   return (

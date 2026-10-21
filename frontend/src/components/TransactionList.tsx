@@ -21,7 +21,6 @@ function rowClassFor(type: Transaction['TransactionType']): string {
   return ROW_CLASS_BY_TYPE[String(type)] ?? ''
 }
 
-
 export function TransactionList({
   transactions,
   title = 'Recent Transactions',

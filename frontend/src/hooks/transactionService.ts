@@ -3,7 +3,6 @@ import type {APIResponse, LoginRequest, TransactionList, User} from "../models/m
 import {UserService} from "../service/UserService.ts";
 import axios from 'axios'
 
-
 const BASE = "/transactions";
 
 const cleanParams = (params) =>
@@ -19,10 +18,6 @@ const transactionService = {
         })
         return response.data
     },
-
-
 }
-
-
 
 export default transactionService;

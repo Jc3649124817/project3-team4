@@ -50,12 +50,9 @@ export interface APIResponse<T>{
     status: number;
 }
 
-
-
 export interface NewTransaction{
     "TransactionType": 'Deposit' | 'Withdraw' | 'Transfer';
     "Amount": number;
     "OriginID": number | null;
     "DestinationID": number | null;
 }
-
