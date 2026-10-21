@@ -56,12 +56,6 @@ public class AuthService {
             throw new IllegalArgumentException("Username must be present!");
         }
 
-        //Check if the role is valid ("user" or "admin")
-        if(!newUser.getRole().equals("user")
-                && !newUser.getRole().equals("admin")){
-            throw new IllegalArgumentException("Invalid Role!");
-        }
-
         //Check if username already exists
         //Using our custom UserDAO method findByUsername()
         if(userService.findByUsername(newUser.getUsername()).isPresent()){
@@ -69,7 +63,7 @@ public class AuthService {
         }
 
         // Create a User object from the inputted UserDTO
-        User input = new User(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), newUser.getPhoneNumber(), newUser.getUsername(), newUser.getPassword(), newUser.getRole());
+        User input = new User(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), newUser.getPhoneNumber(), newUser.getUsername(), newUser.getPassword());
 
         //save() is used for inserts AND updates
             //if the ID doesn't exist, it inserts a new record
@@ -80,6 +74,4 @@ public class AuthService {
             //NOTE: we did this in the UserService in getAllUsers()
 
     }
-
-
 }

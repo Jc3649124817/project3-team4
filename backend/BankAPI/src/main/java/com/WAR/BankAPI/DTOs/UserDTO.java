@@ -16,8 +16,6 @@ public class UserDTO {
     private String password;
     private String password2;
 
-    private String role;
-
     public UserDTO() {
     }
 
@@ -31,7 +29,6 @@ public class UserDTO {
         this.username = username;
         this.password = password;
         this.password2 = password2;
-        this.role = "user";
     }
 
     // Boilerplate getters and setters
@@ -90,14 +87,6 @@ public class UserDTO {
 
     public void setPassword2(String password2) {
         this.password2 = password2;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 
     @Override
