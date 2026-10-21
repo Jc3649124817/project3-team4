@@ -13,7 +13,6 @@ const cleanParams = (params) =>
 
 const transactionService = {
 
-
     getTransactions: async (filters: { numTransactions?: number } = {}): Promise<TransactionList> => {
         const response = await axios.get<TransactionList>('http://localhost:8080/transactions', {
             params: filters,
