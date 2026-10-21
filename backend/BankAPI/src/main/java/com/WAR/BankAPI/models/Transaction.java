@@ -14,7 +14,7 @@ public class Transaction {
     private Integer transactionId;
 
     @Column(nullable = false)
-    private String type;
+    private String transactionType;
 
     @Column(nullable = false)
     private BigDecimal amount;
@@ -40,8 +40,8 @@ public class Transaction {
         return transactionId;
     }
 
-    public String getType() {
-        return type;
+    public String getTransactionType() {
+        return transactionType;
     }
 
     public BigDecimal getAmount() {
@@ -74,8 +74,8 @@ public class Transaction {
         this.amount = amount;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setTransactionType(String transactionType) {
+        this.transactionType = transactionType;
     }
 
     public void setDestinationId(Long destinationId) {
@@ -98,7 +98,7 @@ public class Transaction {
     public String toString() {
         return "Transaction{" +
                 "transactionId=" + transactionId +
-                ", type=" + type +
+                ", type=" + transactionType +
                 ", amount=" + amount +
                 ", destinationId='" + destinationId + '\'' +
                 ", originId='" + originId + '\'' +

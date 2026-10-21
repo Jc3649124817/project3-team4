@@ -1,6 +1,7 @@
 import { Table } from 'react-bootstrap'
 import type { Transaction } from '../models/models'
 import { formatCurrency } from '../utils/formatCurrency'
+import {formatDate} from '../utils/formatDate'
 
 
 interface TransactionListProps {
@@ -61,7 +62,7 @@ export function TransactionList({
                   className={colorByType ? rowClassFor(transaction.TransactionType) : undefined}
               >
 
-              <td>{transaction.Date}</td>
+                <td>{formatDate(transaction.Date)}</td>
                 <td>{transaction.TransactionType}</td>
                 <td className="text-end">
                   {formatCurrency(transaction.Amount)}
