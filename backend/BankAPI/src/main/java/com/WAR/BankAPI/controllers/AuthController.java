@@ -1,6 +1,7 @@
 package com.WAR.BankAPI.controllers;
 
 import com.WAR.BankAPI.DTOs.LoginDTO;
+import com.WAR.BankAPI.DTOs.RegisterReturnDTO;
 import com.WAR.BankAPI.DTOs.UserDTO;
 import com.WAR.BankAPI.jwt.JwtUtil;
 import com.WAR.BankAPI.models.User;
@@ -55,12 +56,14 @@ public class AuthController {
 
     //Register User (POST Requests to /auth/register will get routed here)
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody UserDTO newUser){
+    public ResponseEntity<RegisterReturnDTO> registerUser(@RequestBody UserDTO newUser){
 
         //Send the newUser to the Service to get processed and persisted
         User createdUser = authService.insertUser(newUser);
 
-        return ResponseEntity.status(201).body(createdUser);
+        RegisterReturnDTO response = new RegisterReturnDTO(createdUser.getFirstName(), createdUser.getLastName(), createdUser.getEmail(), createdUser.getPhoneNumber(), createdUser.getUsername());
+
+        return ResponseEntity.status(201).body(response);
 
         //No error handling here! Check the @ExceptionHandler at the bottom of this file
 
