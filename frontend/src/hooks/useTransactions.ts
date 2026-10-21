@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { TransactionService } from '../service/TransactionService'
+import { TransactionService } from '../hooks/transactionService'
 import type { Transaction } from '../models/models'
 
 export function useTransactions(limit?: number) {
