@@ -10,7 +10,7 @@ import {useToast} from "./ToastProvider.tsx";
 export function ContactForm() {
     const { user } = useAuth();
     const { save, saving } = useProfile();
-    const { showToast } = useToast();
+    const showToast = useToast();
 
     const [values, setValues] = useState({
         Email: user?.Email ?? '',
@@ -42,12 +42,7 @@ export function ContactForm() {
         if (values.Email !== user?.Email) changes.Email = values.Email.trim();
         if (values.PhoneNumber !== user?.PhoneNumber) changes.PhoneNumber = values.PhoneNumber.trim();
 
-        try {
-            await save(changes);
-            showToast('success', 'Phone number and/or email changed successfully.');
-        } catch {
-            showToast('danger', 'Phone number and/or email change failed');
-        }
+        await save(changes);
     }
 
     return (
@@ -65,11 +60,11 @@ export function ContactForm() {
                 name="PhoneNumber"
                 value={values.PhoneNumber}
                 onChange={handleChange}
-                autoComplete="phone-number"
+                autoComplete="tel"
                 error={errors.PhoneNumber}
             />
             <Button type="submit" loading={saving} disabled={!dirty}>
-                Save email
+                Save contact information
             </Button>
         </Form>
     );

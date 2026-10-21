@@ -2,15 +2,10 @@ import { useState, type ChangeEvent, type SubmitEvent } from 'react';
 import { Form } from 'react-bootstrap';
 import { Button } from './Button';
 import { Input } from './Input';
-import { useAuth } from '../hooks/useAuth';
-import { useProfile } from '../hooks/useProfile';
-import type { UpdateProfileRequest } from '../models/models.ts';
-import { useToast} from "./ToastProvider.tsx";
+import { useChangePassword } from '../hooks/useChangePassword';
 
 export function PasswordForm() {
-    const { user } = useAuth();
-    const { save, saving } = useProfile();
-    const showToast = useToast();
+    const { save, saving } = useChangePassword();
 
     const [values, setValues] = useState({
         CurrentPassword: '',
@@ -46,46 +41,26 @@ export function PasswordForm() {
         if (!values.CurrentPassword) {
             newErrors.CurrentPassword = 'Current password is required.';
         }
-        if (!values.NewPassword) {
-            newErrors.NewPassword = 'New password is required.';
+        if (values.NewPassword === values.CurrentPassword) {
+            newErrors.NewPassword = 'New password must differ from your current password.';
         }
-        if (!values.ConfirmPassword) {
-            newErrors.ConfirmPassword = 'Please confirm your new password.';
-        }
-
-        if (
-            values.CurrentPassword &&
-            values.NewPassword &&
-            values.NewPassword === values.CurrentPassword
-        ) {
-            newErrors.NewPassword =
-                'New password must differ from your current password.';
-        }
-
-        if (
-            values.CurrentPassword &&
-            user?.Password &&
-            values.CurrentPassword !== user.Password
-        ) {
-            newErrors.CurrentPassword = 'Current password is incorrect.';
+        if (values.NewPassword !== values.ConfirmPassword) {
+            newErrors.ConfirmPassword = 'Passwords do not match.';
         }
 
         setErrors(newErrors);
+        if (Object.keys(newErrors).length > 0) return;
 
-        if (Object.keys(newErrors).length > 0) {
-            showToast('warning', "Please make sure your new password is different from your current password.")
-            return;
+        const ok = await save({
+            CurrentPassword: values.CurrentPassword,
+            NewPassword: values.NewPassword,
+        });
+
+        // Clear the fields only on success so the user doesn't retype on failure.
+        if (ok) {
+            setValues({ CurrentPassword: '', NewPassword: '', ConfirmPassword: '' });
+            setErrors({});
         }
-
-        const changes: UpdateProfileRequest = {};
-        changes.Password = values.CurrentPassword.trim();
-        try {
-            await save(changes);
-            showToast('success', 'Password changed successfully.');
-        } catch {
-            showToast('danger', 'Password change failed');
-        }
-
     }
 
     return (
