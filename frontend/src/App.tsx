@@ -7,6 +7,7 @@ import { DashboardPage } from './pages/DashboardPage'
 import { TransactionsPage } from './pages/TransactionsPage'
 import { TransactionHistoryPage } from './pages/TransactionHistoryPage'
 import { VideoBackground } from './components/VideoBackground'
+import { UserProfilePage} from "./pages/UserProfilePage.tsx";
 
 function AppLayout() {
   return (
@@ -31,10 +32,8 @@ function App() {
         <Route element={<AppLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/transactions" element={<TransactionsPage />} />
-          <Route
-            path="/transaction-history"
-            element={<TransactionHistoryPage />}
-          />
+          <Route path="/transaction-history" element={<TransactionHistoryPage />} />
+          <Route path="/user-profile" element={<UserProfilePage />} />
         </Route>
       </Route>
 

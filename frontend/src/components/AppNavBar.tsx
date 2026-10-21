@@ -59,6 +59,14 @@ export function AppNavBar() {
             >
               History
             </Nav.Link>
+
+            <Nav.Link
+                as={NavLink}
+                to="/user-profile"
+                eventKey="profile"
+            >
+              Profile
+            </Nav.Link>
           </Nav>
 
           {user && (

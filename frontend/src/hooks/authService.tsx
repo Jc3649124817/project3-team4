@@ -1,8 +1,8 @@
 import { UserService } from "../service/UserService.ts";
 import type {
-    APIResponse,
+    APIResponse, ChangePasswordRequest,
     LoginRequest,
-    RegisterRequest,
+    RegisterRequest, UpdateProfileRequest,
     User,
 } from "../models/models.ts";
 
@@ -24,6 +24,29 @@ export function register(request: RegisterRequest): Promise<APIResponse<User>> {
     if (request.Password !== request.Password2) return UserService.register(0); // passwords differ
     if (!request.Email.includes("@")) return UserService.register(-1);          // invalid email
     return UserService.register(1);
+}
+
+export function changePassword(request: ChangePasswordRequest): Promise<APIResponse<null>> {
+    if (request.CurrentPassword !== "apple123") {
+        return UserService.changePassword(0);
+    }
+    return UserService.changePassword(1);
+}
+
+export function updateProfile (
+    currentUser: User,
+    changes: UpdateProfileRequest,
+    ): Promise<APIResponse<User>> {
+        const { FirstName, LastName, Email, PhoneNumber } = changes;
+
+        const badFirstName = FirstName !== undefined && FirstName.trim() === "";
+        const badLastName = LastName !== undefined && LastName.trim() === "";
+        const badEmail = Email !== undefined && !Email.includes("@");
+        const badPhoneNumber = PhoneNumber !== undefined && PhoneNumber.trim() === "";
+
+        const invalid = badFirstName || badLastName || badEmail || badPhoneNumber;
+
+        return UserService.updateUser(invalid ? 0 : 1, currentUser, changes);
 }
 
 /** Checks whether the previously signed-in user still exists. */
