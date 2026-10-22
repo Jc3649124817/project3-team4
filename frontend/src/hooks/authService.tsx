@@ -1,15 +1,15 @@
 import type { RegisterRequest, LoginRequest } from "../models/models";
 
-const BASE_URL = 'http://localhost:8080/auth';
 
 let token: string = '';
 let role: string = '';
+const BASE_URL = "http://localhost:8080/auth";
+const KEY = "Token";
 
-export const setToken = (t: string) => {
-  token = t;
-};
-
-export const getToken = () => token;
+export const setToken = (t: string) => localStorage.setItem(KEY, t);
+export const getToken = () => localStorage.getItem(KEY);
+export const clearToken = () => localStorage.removeItem(KEY);
+// export const getToken = () => token;
 export const getRole = () => role;
 
 export const login = async (request : LoginRequest): Promise<string> => {
@@ -19,7 +19,10 @@ export const login = async (request : LoginRequest): Promise<string> => {
     body: JSON.stringify(request)
   });
   if (!res.ok) throw new Error('Invalid credentials');
-  return res.text();
+  let tokenText = await res.text()
+  console.log(tokenText)
+  setToken(tokenText)
+  return tokenText;
 };
 
 export const register = async (request : RegisterRequest): Promise<any> => {
@@ -29,9 +32,10 @@ export const register = async (request : RegisterRequest): Promise<any> => {
     body: JSON.stringify(request)
   });
   if (!res.ok) throw new Error('Registration failed');
-  return res.json();
+  // return res.json();
 };
 
 export async function logout(): Promise<void> {
+  clearToken()
     // No UserService.logout yet. A real backend would invalidate the session here.
 }
