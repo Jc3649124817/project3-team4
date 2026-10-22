@@ -6,6 +6,9 @@ import com.WAR.BankAPI.models.User;
 import com.WAR.BankAPI.repos.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.WAR.BankAPI.services.AccountService;
 
 @Service //1 of the 4 stereotype annotations - makes this Class a bean
 public class AuthService {
@@ -16,11 +19,14 @@ public class AuthService {
     private final UserDAO userDAO;
     //We also need the UserService to find users by username
     private final UserService userService;
+    //We also need the AccountService to create default accounts
+    private final AccountService accountService;
 
     @Autowired
-    public AuthService(UserDAO userDAO, UserService userService) {
+    public AuthService(UserDAO userDAO, UserService userService, AccountService accountService) {
         this.userDAO = userDAO;
         this.userService = userService;
+        this.accountService = accountService;
     }
 
     //Login - calls the UserDAO's findByUsernameAndPassword()
@@ -46,6 +52,7 @@ public class AuthService {
     }
 
     //Insert User - calls the UserDAO's save() method
+    @Transactional
     public User insertUser(UserDTO newUser){
 
         //Some basic input validation (make sure the user fields are valid)
@@ -67,6 +74,8 @@ public class AuthService {
         //save() is used for inserts AND updates
             //if the ID doesn't exist, it inserts a new record
             //if the ID DOES exist, it updates it
-        return userDAO.save(input);
+        User result = userDAO.save(input);
+        accountService.createDefaultAccounts(input);
+        return result;
     }
 }
