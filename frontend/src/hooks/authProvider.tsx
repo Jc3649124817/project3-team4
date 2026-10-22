@@ -125,6 +125,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     }, []);
 
+    // const updateUser = useCallback((next: User) => setUser(next), []);
+
     const value = useMemo<AuthContextValue>(
         () => ({
             token,

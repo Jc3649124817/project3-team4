@@ -1,4 +1,4 @@
-import type {User, APIResponse} from '../models/models.ts';
+import type {User, APIResponse, UpdateProfileRequest} from '../models/models.ts';
 
 const delay = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 const randomDelay = (min = 500, max = 800) =>
@@ -14,7 +14,7 @@ export const MOCK_USER: User =
     };
 
 export class UserService {
-    static async register(input: number ): Promise<APIResponse<User>> {
+    static async register(input: number): Promise<APIResponse<User>> {
         await randomDelay();
         if(input === 1){
             return {
@@ -44,7 +44,6 @@ export class UserService {
 
     };
 
-
     static async logIn(input: number): Promise<APIResponse<User>> {
         await randomDelay();
         if(input === 1) {
@@ -67,8 +66,6 @@ export class UserService {
             };
         }
     };
-
-
 
     static async getUser(input: number): Promise<APIResponse<User>> {
         await randomDelay();
@@ -95,8 +92,53 @@ export class UserService {
         }
     };
 
+    static async updateUser(input: number,
+                            currentUser: User,
+                            UpdateProfileRequest: UpdateProfileRequest):
+        Promise<APIResponse<User>> {
+        await randomDelay();
+        if(input === 1){
+            return {
+            data: {...currentUser, ...UpdateProfileRequest},
+            error: null,
+            status: 200,
+            };
+        } else if (input === 0){
+            return {
+                data: null,
+                error: "Failed Profile Update: Invalid changes attempted.",
+                status: 400,
+            };
+        } else {
+            return {
+                data: null,
+                error: "Unimplemented error.",
+                status: 501,
+            };
+        }
+    }
+
+    static async changePassword(input: number): Promise<APIResponse<null>> {
+        await randomDelay();
+        if(input === 1){
+            return {
+                data: null,
+                error: null,
+                status: 200,
+            };
+        } else if (input === 0){
+            return {
+                data: null,
+                error: "Failed Password Change: Current Password is Incorrect.",
+                status: 400,
+            };
+        } else {
+            return {
+                data: null,
+                error: "Unimplemented error.",
+                status: 501,
+            };
+        }
+    }
+
 }
-
-
-
-

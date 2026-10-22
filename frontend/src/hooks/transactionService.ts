@@ -6,11 +6,6 @@ import { tokenHeader } from "../hooks/api";
 
 const BASE = "/transactions";
 
-const cleanParams = (params) =>
-    Object.fromEntries(
-        Object.entries(params).filter(([, v]) => v !== undefined && v !== null && v !== "")
-    );
-
 const transactionService = {
 
     getTransactions: async (filters: { numTransactions?: number } = {}): Promise<TransactionList> => {
@@ -25,8 +20,6 @@ const transactionService = {
         if (!response.ok) throw new Error(`Failed to load transactions: ${response.status}`);
         return response.json();
     },
-
-
 }
 
 export default transactionService;

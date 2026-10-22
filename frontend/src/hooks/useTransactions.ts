@@ -35,7 +35,6 @@ export function useTransactions(limit?: number) {
       }
     }
 
-
     void loadTransactions()
 
     return () => {
