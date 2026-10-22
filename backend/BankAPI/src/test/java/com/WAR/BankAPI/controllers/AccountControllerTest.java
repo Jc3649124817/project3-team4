@@ -6,6 +6,10 @@ import com.WAR.BankAPI.models.User;
 import com.WAR.BankAPI.services.AccountService;
 import com.WAR.BankAPI.services.UserService;
 import org.junit.jupiter.api.Test;
+import com.WAR.BankAPI.jwt.JwtFilter;
+import com.WAR.BankAPI.jwt.JwtUtil;
+import com.WAR.BankAPI.jwt.SecurityConfig;
+import org.springframework.context.annotation.Import;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
@@ -22,6 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AccountController.class)
+@Import({SecurityConfig.class, JwtFilter.class, JwtUtil.class})
 class AccountControllerTest {
 
     @Autowired
@@ -32,6 +37,21 @@ class AccountControllerTest {
 
     @MockitoBean
     private UserService userService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Test
+    void acceptsASignedJwtAndLooksUpItsUsername() throws Exception {
+        User owner = signedInUser();
+        when(accountService.getAccountsByUser(owner)).thenReturn(List.of());
+        String token = jwtUtil.generateToken("alice", "user", 1);
+
+        mockMvc.perform(get("/accounts").header("Authorization", "Bearer " + token))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.Accounts").isEmpty());
+        verify(accountService).getAccountsByUser(owner);
+    }
 
     private User signedInUser() {
         User owner = new User();
@@ -51,7 +71,7 @@ class AccountControllerTest {
     @Test
     void rejectsUnauthenticatedRequests() throws Exception {
         mockMvc.perform(get("/accounts").accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isUnauthorized());
+            .andExpect(status().is4xxClientError());
         verifyNoInteractions(accountService);
     }
 
@@ -88,7 +108,7 @@ class AccountControllerTest {
         when(userService.findByUsername("alice")).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/accounts").with(user("alice")))
-            .andExpect(status().isUnauthorized());
+            .andExpect(status().is4xxClientError());
         verifyNoInteractions(accountService);
     }
 

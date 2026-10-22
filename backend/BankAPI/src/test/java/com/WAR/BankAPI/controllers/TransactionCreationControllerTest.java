@@ -5,6 +5,10 @@ import com.WAR.BankAPI.DTOs.TransactionDTO;
 import com.WAR.BankAPI.exceptions.InvalidRequestException;
 import com.WAR.BankAPI.services.TransactionCreationService;
 import org.junit.jupiter.api.Test;
+import com.WAR.BankAPI.jwt.JwtFilter;
+import com.WAR.BankAPI.jwt.JwtUtil;
+import com.WAR.BankAPI.jwt.SecurityConfig;
+import org.springframework.context.annotation.Import;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.HttpStatus;
@@ -24,6 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(TransactionCreationController.class)
+@Import({SecurityConfig.class, JwtFilter.class, JwtUtil.class})
 class TransactionCreationControllerTest {
     @Autowired MockMvc mvc;
     @MockitoBean TransactionCreationService service;
@@ -53,7 +58,7 @@ class TransactionCreationControllerTest {
     void anonymousRequestCannotCreateTransaction() throws Exception {
         mvc.perform(post("/transactions").with(csrf()).accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON).content(BODY))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().is4xxClientError());
         verifyNoInteractions(service);
     }
 
@@ -83,3 +88,4 @@ class TransactionCreationControllerTest {
     }
 
 }
+

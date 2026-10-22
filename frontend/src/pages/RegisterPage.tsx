@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Redirect } from '../components/Redirect.tsx'
 import { Input } from '../components/Input.tsx'
-import { Form, Button } from 'react-bootstrap'
+import { Alert, Form, Button } from 'react-bootstrap'
 import { type RegisterError, falseRegister } from '../utils/validateRegister.ts'
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../components/ToastProvider';
@@ -44,8 +44,8 @@ function RegisterForm() {
     const currentEmail = email.trim();
     const currentPhoneNumber = phoneNumber.trim();
     const currentUsername = username.trim();
-    const currentPassword = password1.trim();
-    const currentPassword2 = password2.trim();
+    const currentPassword = password1;
+    const currentPassword2 = password2;
 
     const freshErrors: RegisterError = {
       FirstName : currentFirstName === "" ? "First name is not present" : "",
@@ -77,6 +77,7 @@ function RegisterForm() {
 
   return (
     <Form onSubmit={handleSubmit} className="p-4 border rounded">
+      {error && <Alert variant="danger">{error}</Alert>}
       <Input 
         label="First Name" 
         name="firstName" 
@@ -161,3 +162,4 @@ function RegisterForm() {
     </Form>
   );
 }
+
