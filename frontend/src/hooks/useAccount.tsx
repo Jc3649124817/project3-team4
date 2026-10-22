@@ -18,7 +18,6 @@ export function useAccount(){
             } else {
                 setAccounts(newAccounts.data)
             }
-
         } catch (err) {
             console.log(err)
         } finally {
@@ -26,7 +25,5 @@ export function useAccount(){
         }
     }
 
-
     return {accounts, loading, error, updateAccounts}
-
 }

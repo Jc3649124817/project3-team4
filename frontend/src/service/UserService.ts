@@ -44,7 +44,6 @@ export class UserService {
 
     };
 
-
     static async logIn(input: number): Promise<APIResponse<User>> {
         await randomDelay();
         if(input === 1) {
@@ -67,8 +66,6 @@ export class UserService {
             };
         }
     };
-
-
 
     static async getUser(input: number): Promise<APIResponse<User>> {
         await randomDelay();

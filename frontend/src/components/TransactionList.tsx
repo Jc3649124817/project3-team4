@@ -1,6 +1,7 @@
 import { Table } from 'react-bootstrap'
 import type { Transaction } from '../models/models'
 import { formatCurrency } from '../utils/formatCurrency'
+import {formatDate} from '../utils/formatDate'
 
 
 interface TransactionListProps {
@@ -19,7 +20,6 @@ const ROW_CLASS_BY_TYPE: Record<string, string> = {
 function rowClassFor(type: Transaction['TransactionType']): string {
   return ROW_CLASS_BY_TYPE[String(type)] ?? ''
 }
-
 
 export function TransactionList({
   transactions,
@@ -61,7 +61,7 @@ export function TransactionList({
                   className={colorByType ? rowClassFor(transaction.TransactionType) : undefined}
               >
 
-              <td>{transaction.Date}</td>
+                <td>{formatDate(transaction.Date)}</td>
                 <td>{transaction.TransactionType}</td>
                 <td className="text-end">
                   {formatCurrency(transaction.Amount)}
