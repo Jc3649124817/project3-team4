@@ -5,8 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
-import java.util.UUID;
+import jakarta.persistence.Column;
 
 @Entity //This tells Spring Data that this Class is meant to be a DB entity (DB table)
 @Table(name = "users") //This helps us set table configs like the name
@@ -16,19 +15,31 @@ public class User {
     //Spring Data doesn't play nice with snake_case, and the errors will be super vague
 
     @Id //Sets this field as the Primary Key (PK)
-    @GeneratedValue(strategy = GenerationType.UUID) //This is what makes the PK autoincrement
-    private UUID userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //This is what makes the PK autoincrement
+    private Integer userId;
 
     //@Column - this is not needed to make a field a column!!!
         //BUT, we need it to apply constraints
 
+    @Column(nullable = false)
     private String firstName;
+
+    @Column(nullable = false)
     private String lastName;
+
+    @Column(nullable = false)
     private String email;
+
+    @Column(nullable = false)
     private String phoneNumber;
+
+    @Column(nullable = false)
     private String username;
+
+    @Column(nullable = false)
     private String password;
 
+    private String role;
 
     //boilerplate---------------------------------
 
@@ -40,15 +51,23 @@ public class User {
     public User(String firstName, String lastName, String email,
                 String phoneNumber, String username, String password
     ) {
+        this(firstName, lastName, email, phoneNumber, username, password, "user");
+    }
+
+    public User(String firstName, String lastName, String email,
+                String phoneNumber, String username, String password,
+                String role
+    ) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.username = username;
         this.password = password;
+        this.role = role;
     }
 
-    public UUID getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
@@ -100,9 +119,17 @@ public class User {
         this.password = password;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     @Override
     public String toString() {
         return "User [userId=" + userId + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email
-                + ", phoneNumber=" + phoneNumber + ", username=" + username + "]";
+                + ", phoneNumber=" + phoneNumber + ", username=" + username + ", role=" + role + "]";
     }
 }

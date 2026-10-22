@@ -6,25 +6,39 @@ import type {
     User,
 } from "../models/models.ts";
 
-// The auth service is the one place that talks to UserService. It returns the
-// APIResponse as-is, so callers check `data` / `error` / `status` directly.
-//
-// --- MOCK ADAPTERS ---------------------------------------------------------
-// UserService picks its response from a number, so the credential checks below
-// translate real input into that number. When UserService takes real
-// arguments, delete the checks and forward the request objects instead.
-// ---------------------------------------------------------------------------
+let token: string = '';
+let role: string = '';
+const BASE_URL = "http://localhost:8080/auth";
+const KEY = "Token";
 
-export function login({ Username, Password }: LoginRequest): Promise<APIResponse<User>> {
-    const valid = Username.trim() === "johnsmith" && Password === "apple123";
-    return UserService.logIn(valid ? 1 : 0);
-}
+export const setToken = (t: string) => localStorage.setItem(KEY, t);
+export const getToken = () => localStorage.getItem(KEY);
+export const clearToken = () => localStorage.removeItem(KEY);
+// export const getToken = () => token;
+export const getRole = () => role;
 
-export function register(request: RegisterRequest): Promise<APIResponse<User>> {
-    if (request.Password !== request.Password2) return UserService.register(0); // passwords differ
-    if (!request.Email.includes("@")) return UserService.register(-1);          // invalid email
-    return UserService.register(1);
-}
+export const login = async (request : LoginRequest): Promise<string> => {
+  const res = await fetch(`${BASE_URL}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(request)
+  });
+  if (!res.ok) throw new Error('Invalid credentials');
+  let tokenText = await res.text()
+  console.log(tokenText)
+  setToken(tokenText)
+  return tokenText;
+};
+
+export const register = async (request : RegisterRequest): Promise<any> => {
+  const res = await fetch(`${BASE_URL}/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(request)
+  });
+  if (!res.ok) throw new Error('Registration failed');
+  // return res.json();
+};
 
 export function changePassword(request: ChangePasswordRequest): Promise<APIResponse<null>> {
     if (request.CurrentPassword !== "apple123") {
@@ -55,5 +69,6 @@ export function getCurrentUser(storedUsername: string): Promise<APIResponse<User
 }
 
 export async function logout(): Promise<void> {
+  clearToken()
     // No UserService.logout yet. A real backend would invalidate the session here.
 }

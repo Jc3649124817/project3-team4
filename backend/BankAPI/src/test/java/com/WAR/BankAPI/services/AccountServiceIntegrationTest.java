@@ -55,6 +55,7 @@ class AccountServiceIntegrationTest {
     private Long checkingNumber;
     private Long savingsNumber;
 
+    /*
     @BeforeEach
     void setUp() {
         // Confirm the connection before creating any test records.

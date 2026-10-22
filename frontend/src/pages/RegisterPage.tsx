@@ -5,6 +5,7 @@ import { Form, Button } from 'react-bootstrap'
 import { type RegisterError, falseRegister } from '../utils/validateRegister.ts'
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../components/ToastProvider';
+import { register } from '../hooks/authService.tsx';
 
 //to be replaced with actual register content
 export function RegisterPage() {
@@ -35,7 +36,7 @@ function RegisterForm() {
   const [registerErrors, setRegisterErrors] = useState<RegisterError | undefined>(undefined);
   const [error, setError] = useState('');
 
-  const handleSubmit = (e : React.SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e : React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const currentFirstName = firstName.trim();
@@ -64,9 +65,14 @@ function RegisterForm() {
     }
 
     setError('');
-    console.log('Submitted: ', firstName, lastName, email, phoneNumber, username, password1);
-    showToast('success', 'Account created! Redirecting to login...');
-    navigate('/login');
+    
+    try {
+      await register({"FirstName" : firstName, "LastName" : lastName, "Email" : email, "PhoneNumber" : phoneNumber, "Username" : username, "Password" : password1, "Password2" : password2});
+      showToast('success', 'Account created! Redirecting to login...');
+      navigate('/login');
+    } catch {
+      showToast('danger', 'Registration failed');
+    }
   }
 
   return (

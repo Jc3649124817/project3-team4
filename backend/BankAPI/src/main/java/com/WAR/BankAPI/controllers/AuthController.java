@@ -1,4 +1,83 @@
 package com.WAR.BankAPI.controllers;
 
+import com.WAR.BankAPI.DTOs.LoginDTO;
+import com.WAR.BankAPI.DTOs.RegisterReturnDTO;
+import com.WAR.BankAPI.DTOs.UserDTO;
+import com.WAR.BankAPI.jwt.JwtUtil;
+import com.WAR.BankAPI.models.User;
+import com.WAR.BankAPI.services.AuthService;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+//Make the Class a Bean and automatically send HTTP response data as JSON
+@RestController
+//All requests with /auth will get routed here
+@RequestMapping("/auth")
+//Allow CORS requests from React and Angular frontends
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:4200"}, allowedHeaders = "*")
 public class AuthController {
+
+    //Inject the UserService with Constructor Injection
+    private final AuthService authService;
+    //Inject the JwtUtil so we can make JWTs after login
+    private final JwtUtil jwtUtil;
+
+    @Autowired
+    public AuthController(AuthService authService, JwtUtil jwtUtil) {
+        this.authService = authService;
+        this.jwtUtil = jwtUtil;
+    }
+
+    //Log in User (POST Requests to /auth will get routed here)
+    //JWTs will get created/returned upon successful login
+    @PostMapping
+    public ResponseEntity<String> login(@RequestBody LoginDTO loginDTO) {
+
+        System.out.println(loginDTO); //just to see
+
+        User loggedInUser = authService.login(loginDTO);
+
+        //If the User was null^ login failed and Exception was thrown from the service
+
+        //Now we can make and return the JWT!
+        String token = jwtUtil.generateToken(
+            loggedInUser.getUsername(),
+            loggedInUser.getRole(),
+            loggedInUser.getUserId()
+        );
+
+        System.out.println("Token: " + token);
+
+        return ResponseEntity.ok(token);
+    }
+
+    //Register User (POST Requests to /auth/register will get routed here)
+    @PostMapping("/register")
+    public ResponseEntity<RegisterReturnDTO> registerUser(@RequestBody UserDTO newUser){
+
+        //Send the newUser to the Service to get processed and persisted
+        User createdUser = authService.insertUser(newUser);
+
+        RegisterReturnDTO response = new RegisterReturnDTO(createdUser.getFirstName(), createdUser.getLastName(), createdUser.getEmail(), createdUser.getPhoneNumber(), createdUser.getUsername());
+
+        return ResponseEntity.status(201).body(response);
+
+        //No error handling here! Check the @ExceptionHandler at the bottom of this file
+
+    }
+
+    //Exception Handling---------------------------------------------
+
+    /*Avoid error handling bloat in your controllers!
+    Any Exceptions thrown from the Service layer will be caught here
+    Our controller methods can now focus solely on success states */
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgument(IllegalArgumentException e){
+        //Return a bad request (400) with the Exception message
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
 }
