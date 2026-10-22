@@ -103,7 +103,6 @@ class AccountServiceIntegrationTest {
                 .getAccountNumber();
         });
     }
-    */
 
     @AfterEach
     void cleanUp() {

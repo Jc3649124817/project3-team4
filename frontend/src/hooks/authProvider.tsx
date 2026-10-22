@@ -77,7 +77,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setIsLoading(false);
     }, []);
 
-
     // Login and register share the same flow, so they share one helper.
     const authenticate = useCallback(
         async (action: () => Promise<string>, fallbackError: string) => {

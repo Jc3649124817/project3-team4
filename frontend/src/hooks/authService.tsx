@@ -62,6 +62,29 @@ export function updateProfile (
         return UserService.updateUser(invalid ? 0 : 1, currentUser, changes);
 }
 
+export function changePassword(request: ChangePasswordRequest): Promise<APIResponse<null>> {
+    if (request.CurrentPassword !== "apple123") {
+        return UserService.changePassword(0);
+    }
+    return UserService.changePassword(1);
+}
+
+export function updateProfile (
+    currentUser: User,
+    changes: UpdateProfileRequest,
+    ): Promise<APIResponse<User>> {
+        const { FirstName, LastName, Email, PhoneNumber } = changes;
+
+        const badFirstName = FirstName !== undefined && FirstName.trim() === "";
+        const badLastName = LastName !== undefined && LastName.trim() === "";
+        const badEmail = Email !== undefined && !Email.includes("@");
+        const badPhoneNumber = PhoneNumber !== undefined && PhoneNumber.trim() === "";
+
+        const invalid = badFirstName || badLastName || badEmail || badPhoneNumber;
+
+        return UserService.updateUser(invalid ? 0 : 1, currentUser, changes);
+}
+
 /** Checks whether the previously signed-in user still exists. */
 export function getCurrentUser(storedUsername: string): Promise<APIResponse<User>> {
     return UserService.getUser(storedUsername ? 1 : 0);
