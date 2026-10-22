@@ -6,6 +6,7 @@ import com.WAR.BankAPI.models.*;
 import com.WAR.BankAPI.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -31,9 +32,10 @@ public class TransactionController {
             @RequestParam(required = false) String type,
             @RequestParam(required = false) BigDecimal minAmount,
             @RequestParam(required = false) BigDecimal maxAmount,
-            @RequestParam(required = false) Long accountId) {
+            @RequestParam(required = false) Long accountId, Authentication authentication) {
         //TODO: integrate with JWT, if expired/unauthenticated, pass a 401: unauthorized.
 
+        String username = authentication.getName();
         if(numTransactions <= 0 || numTransactions > 100){
             numTransactions = 5;
         }
@@ -47,7 +49,7 @@ public class TransactionController {
 
         List<TransactionDTO> transactions =  transactionService.getTransactions( numTransactions,
                 sortBy, direction,
-                type, minAmount, maxAmount, accountId);
+                type, minAmount, maxAmount, accountId, username);
 
         return ResponseEntity.ok(new TransactionListDTO(transactions));
     }
