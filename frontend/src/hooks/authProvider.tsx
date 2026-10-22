@@ -23,6 +23,7 @@ export interface AuthContextValue {
     login: (request: LoginRequest) => Promise<boolean>;
     register: (request: RegisterRequest) => Promise<boolean>;
     logout: () => Promise<void>;
+    updateUser: (user: User) => void;
 }
 
 // Exported so useAuth can read it. Components should use useAuth, not this.
@@ -119,6 +120,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     }, []);
 
+    const updateUser = useCallback((next: User) => setUser(next), []);
+
     const value = useMemo<AuthContextValue>(
         () => ({
             user,
@@ -129,8 +132,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             login,
             register,
             logout,
+            updateUser,
         }),
-        [user, isLoading, isSubmitting, error, login, register, logout],
+        [user, isLoading, isSubmitting, error, login, register, logout, updateUser],
     );
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

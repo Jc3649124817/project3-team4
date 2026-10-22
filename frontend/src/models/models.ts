@@ -56,3 +56,15 @@ export interface NewTransaction{
     "OriginID": number | null;
     "DestinationID": number | null;
 }
+
+export interface UpdateProfileRequest {
+    FirstName?: string;
+    LastName?: string;
+    Email?: string;
+    PhoneNumber?: string;
+}
+
+export interface ChangePasswordRequest {
+    CurrentPassword: string;
+    NewPassword: string;
+}
