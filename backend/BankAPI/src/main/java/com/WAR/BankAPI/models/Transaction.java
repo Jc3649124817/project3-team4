@@ -16,7 +16,7 @@ public class Transaction {
     @Column(nullable = false)
     private String transactionType;
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal amount;
 
     @Column(nullable = true)

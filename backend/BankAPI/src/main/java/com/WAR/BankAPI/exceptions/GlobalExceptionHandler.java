@@ -8,6 +8,16 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @RestControllerAdvice   // applies to every @RestController in the app
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(org.springframework.web.server.ResponseStatusException.class)
+    public ResponseEntity<String> handleStatus(org.springframework.web.server.ResponseStatusException e) {
+        return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
+    }
+
+    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+    public ResponseEntity<String> handleInvalidBody(Exception e) {
+        return ResponseEntity.badRequest().body("A valid JSON request body is required.");
+    }
+
 
     // Your own validation failures from the service layer
     @ExceptionHandler(InvalidRequestException.class)
