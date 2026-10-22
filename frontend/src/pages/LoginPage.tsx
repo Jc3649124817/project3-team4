@@ -6,8 +6,7 @@ import type { User } from '../models/models'
 import { type LoginError, falseLogin } from '../utils/validateLogin.ts'
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../components/ToastProvider';
-import { login, setToken } from '../hooks/authService.tsx';
-
+import { useAuth } from '../hooks/useAuth';
 // to be replaced with actual login content
 export function LoginPage() {
 
@@ -40,6 +39,8 @@ export function LoginPage() {
 function LoginForm() {
   const navigate = useNavigate();
   const showToast = useToast();
+  const {login} = useAuth();
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -96,10 +97,13 @@ function LoginForm() {
     }
     
     try {
-      const token = await login({"Username" : username, "Password" : password});
-      setToken(token);
-      showToast('success', 'Login success!');
-      navigate('/dashboard');
+        const ok = await login({ Username: currentUsername, Password: currentPassword });
+        if (ok) {
+            showToast('success', 'Login success!');
+            navigate('/dashboard');
+        } else {
+            showToast('danger', 'Authentication failed');
+        }
     } catch {
       showToast('danger', 'Authentication failed');
     }
