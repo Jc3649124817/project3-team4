@@ -77,7 +77,7 @@ function LoginForm() {
   }, []);
   */
 
-  const handleSubmit = async (e : React.SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e : React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const currentUsername = username.trim();

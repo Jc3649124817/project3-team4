@@ -27,20 +27,20 @@ public class AuthService {
     public User login(LoginDTO loginDTO){
 
         // Basic input validation
-        String inputtedUsername = loginDTO.getUsername();
-        String inputtedPassword = loginDTO.getPassword();
+        String inputtedUsername = loginDTO.username();
+        String inputtedPassword = loginDTO.password();
 
-        if (inputtedUsername == null || inputtedUsername.trim().isBlank()) {
+        if (inputtedUsername == null || inputtedUsername.trim().isEmpty()) {
             throw new IllegalArgumentException("Username cannot be blank");
         }
-        if (inputtedPassword == null || inputtedPassword.isBlank()) {
+        if (inputtedPassword == null || inputtedPassword.isEmpty()) {
             throw new IllegalArgumentException("Pasword cannot be blank");
         }
  
         // IF the username-password pair exists, return it.
         // Otherwise, throw an exception saying the credentials are invalid
         return userDAO.findByUsernameAndPassword(
-                loginDTO.getUsername(), loginDTO.getPassword()
+                loginDTO.username(), loginDTO.password()
         ).orElseThrow(() -> new IllegalArgumentException("Login Credentials Invalid"));
 
     }
@@ -51,18 +51,18 @@ public class AuthService {
         //Some basic input validation (make sure the user fields are valid)
 
         //Check if a valid username was passed in
-        if(newUser.getUsername().isBlank()){
+        if(newUser.username().isBlank()){
             throw new IllegalArgumentException("Username must be present!");
         }
 
         //Check if username already exists
         //Using our custom UserDAO method findByUsername()
-        if(userService.findByUsername(newUser.getUsername()).isPresent()){
+        if(userService.findByUsername(newUser.username()).isPresent()){
             throw new IllegalArgumentException("Username taken!");
         }
 
         // Create a User object from the inputted UserDTO
-        User input = new User(newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), newUser.getPhoneNumber(), newUser.getUsername(), newUser.getPassword());
+        User input = new User(newUser.firstName(), newUser.lastName(), newUser.email(), newUser.phoneNumber(), newUser.username(), newUser.password());
 
         //save() is used for inserts AND updates
             //if the ID doesn't exist, it inserts a new record

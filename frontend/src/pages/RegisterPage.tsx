@@ -68,10 +68,10 @@ function RegisterForm() {
     
     try {
       await register({"FirstName" : firstName, "LastName" : lastName, "Email" : email, "PhoneNumber" : phoneNumber, "Username" : username, "Password" : password1, "Password2" : password2});
-      showToast('sucecss', 'Account created! Redirecting to login...');
+      showToast('success', 'Account created! Redirecting to login...');
       navigate('/login');
     } catch {
-      showToast('Registration failed');
+      showToast('danger', 'Registration failed');
     }
   }
 

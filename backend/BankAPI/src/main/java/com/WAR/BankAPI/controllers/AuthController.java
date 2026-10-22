@@ -51,7 +51,6 @@ public class AuthController {
         System.out.println("Token: " + token);
 
         return ResponseEntity.ok(token);
-
     }
 
     //Register User (POST Requests to /auth/register will get routed here)
