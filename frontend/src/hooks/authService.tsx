@@ -6,7 +6,6 @@ import type {
     User,
 } from "../models/models.ts";
 
-
 let token: string = '';
 let role: string = '';
 const BASE_URL = "http://localhost:8080/auth";
