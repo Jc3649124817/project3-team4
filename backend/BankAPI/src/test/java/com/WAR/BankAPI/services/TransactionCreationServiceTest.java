@@ -20,7 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Optional;
-import java.util.UUID;
+
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,7 +38,7 @@ class TransactionCreationServiceTest {
     @BeforeEach
     void setUp() {
         user = new User();
-        ReflectionTestUtils.setField(user, "userId", UUID.randomUUID());
+        ReflectionTestUtils.setField(user, "userId", Integer.valueOf(1));
     }
 
     private void loggedIn() {
@@ -132,7 +132,7 @@ class TransactionCreationServiceTest {
     void rejectsAnotherOwnersWithdrawalAndDeposit() {
         loggedIn();
         User other = new User();
-        ReflectionTestUtils.setField(other, "userId", UUID.randomUUID());
+        ReflectionTestUtils.setField(other, "userId", Integer.valueOf(2));
         account(1, other);
         for (var request : new TransactionRequestDTO[]{
                 request("Withdraw", "10", 1L, null), request("Deposit", "10", null, 1L),
@@ -172,3 +172,5 @@ class TransactionCreationServiceTest {
         return new TransactionRequestDTO(type, amount == null ? null : new BigDecimal(amount), origin, destination);
     }
 }
+
+

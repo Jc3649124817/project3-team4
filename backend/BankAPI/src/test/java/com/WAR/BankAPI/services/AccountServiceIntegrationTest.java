@@ -4,13 +4,10 @@ import com.WAR.BankAPI.models.Account;
 import com.WAR.BankAPI.models.AccountType;
 import com.WAR.BankAPI.models.User;
 import com.WAR.BankAPI.repos.AccountDAO;
-
 import jakarta.persistence.EntityManager;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -26,10 +23,10 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(
-    webEnvironment = SpringBootTest.WebEnvironment.NONE,
+    webEnvironment = SpringBootTest.WebEnvironment.MOCK,
     properties = {
         "spring.datasource.url="
-            + "jdbc:postgresql://localhost:5432/reactive_banking_test"
+            + "jdbc:postgresql://localhost:5432/bankapi_transaction_test_jwt"
     }
 )
 @ActiveProfiles("test")
@@ -51,16 +48,14 @@ class AccountServiceIntegrationTest {
     private PlatformTransactionManager transactionManager;
 
     private TransactionTemplate transaction;
-    private UUID userId;
+    private Integer userId;
     private Long checkingNumber;
     private Long savingsNumber;
 
-    /*
     @BeforeEach
     void setUp() {
-        // Confirm the connection before creating any test records.
         assertEquals(
-            "reactive_banking_test",
+            "bankapi_transaction_test_jwt",
             jdbcTemplate.queryForObject(
                 "SELECT current_database()",
                 String.class
@@ -110,7 +105,6 @@ class AccountServiceIntegrationTest {
             return;
         }
 
-        // Remove only this test's accounts and user.
         transaction.executeWithoutResult(status -> {
             entityManager.createQuery(
                 "DELETE FROM Account a WHERE a.user.userId = :userId"
@@ -130,7 +124,6 @@ class AccountServiceIntegrationTest {
     void defaultAccountsAreSavedWithZeroBalances() {
         transaction.executeWithoutResult(status -> {
             User owner = entityManager.find(User.class, userId);
-
             List<Account> accounts =
                 accountService.getAccountsByUser(owner);
 
@@ -141,8 +134,7 @@ class AccountServiceIntegrationTest {
                 assertEquals(userId, account.getUser().getUserId());
                 assertEquals(
                     0,
-                    new BigDecimal("0.00")
-                        .compareTo(account.getBalance())
+                    new BigDecimal("0.00").compareTo(account.getBalance())
                 );
             }
         });
@@ -150,7 +142,6 @@ class AccountServiceIntegrationTest {
 
     @Test
     void balanceChangesRollBackWhenALaterStepFails() {
-        // First commit a starting balance.
         transaction.executeWithoutResult(status ->
             accountService.updateAccountBalance(
                 checkingNumber,
@@ -174,7 +165,6 @@ class AccountServiceIntegrationTest {
                     new BigDecimal("25.00")
                 );
 
-                // Send the changes to PostgreSQL before simulating failure.
                 accountDAO.flush();
 
                 throw new IllegalStateException(
@@ -188,14 +178,12 @@ class AccountServiceIntegrationTest {
             exception.getMessage()
         );
 
-        // Both accounts must retain their previously committed balances.
         assertBalance(checkingNumber, "100.00");
         assertBalance(savingsNumber, "0.00");
     }
 
     @Test
     void balanceUpdateRequiresAnExistingTransaction() {
-        // Intentionally call without TransactionTemplate.
         assertThrows(
             IllegalTransactionStateException.class,
             () -> accountService.updateAccountBalance(
@@ -215,9 +203,6 @@ class AccountServiceIntegrationTest {
         );
 
         assertNotNull(actual);
-        assertEquals(
-            0,
-            new BigDecimal(expected).compareTo(actual)
-        );
+        assertEquals(0, new BigDecimal(expected).compareTo(actual));
     }
 }

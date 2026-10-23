@@ -7,10 +7,10 @@ import { TransactionForm } from '../components/TransactionForm';
 import { useToast } from '../components/ToastProvider';
 import { useAuth } from '../hooks/useAuth';
 import type { Account, NewTransaction } from '../models/models';
-import { AccountService } from '../service/AccountService';
+import { AccountApi } from '../service/AccountApi';
 
-async function loadAccounts(): Promise<Account[]> {
-  const response = await AccountService.getAccountsByUsername(1);
+async function loadAccounts(token: string): Promise<Account[]> {
+  const response = await AccountApi.getAccounts(token);
   if (response.error || response.status !== 200 || !response.data) {
     throw new Error(response.error || 'Unable to load your accounts.');
   }
@@ -18,7 +18,7 @@ async function loadAccounts(): Promise<Account[]> {
 }
 
 export function TransactionsPage() {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const showToast = useToast();
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [loading, setLoading] = useState(true);
@@ -27,7 +27,15 @@ export function TransactionsPage() {
 
   useEffect(() => {
     let active = true;
-    loadAccounts().then(
+    setAccounts([]);
+    setLoading(true);
+    setError(null);
+    if (!token) {
+      setError('Please log in to view your accounts.');
+      setLoading(false);
+      return;
+    }
+    loadAccounts(token).then(
       (data) => {
         if (active) {
           setAccounts(data);
@@ -42,26 +50,25 @@ export function TransactionsPage() {
       },
     );
     return () => { active = false; };
-  }, [attempt]);
+  }, [attempt, token]);
 
   async function handleTransaction(request: NewTransaction) {
-    try {
-      const response = await AccountService.updateAccountBalances(1, request);
-      if (response.status !== 200 || !response.data) {
-        throw new Error(response.error || 'Unable to complete the transaction.');
-      }
-      setAccounts(response.data.Accounts);
-    } catch (reason) {
-      const message = reason instanceof Error ? reason.message : 'Transaction failed. Please try again.';
+    if (!token) throw new Error('Please log in again.');
+    const response = await AccountApi.createTransaction(request, token);
+    if (response.status !== 201 || !response.data) {
+      const message = response.error || 'Unable to complete the transaction.';
       showToast('danger', message);
-      throw new Error(message, { cause: reason });
+      throw new Error(message);
     }
-
-    showToast('success', `${request.TransactionType} of ${new Intl.NumberFormat('en-US', {
-      style: 'currency', currency: 'USD',
-    }).format(request.Amount)} completed successfully.`);
+    showToast('success', 'Transaction completed successfully.');
+    try {
+      setAccounts(await loadAccounts(token));
+    } catch {
+      // The transaction succeeded. Do not report it as failed or invite resubmission.
+      showToast('warning', 'Transaction saved, but balances could not reload. Refresh the page before another transaction.');
+      setError('Transaction saved. Reload your balances before continuing.');
+    }
   }
-
   return (
     <main className="container py-4 py-md-5">
       <div className="content-panel">
@@ -111,3 +118,4 @@ export function TransactionsPage() {
     </main>
   );
 }
+

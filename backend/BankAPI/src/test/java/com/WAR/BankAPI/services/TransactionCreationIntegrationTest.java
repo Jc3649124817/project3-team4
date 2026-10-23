@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @ActiveProfiles("test")
 class TransactionCreationIntegrationTest {
     @Autowired TransactionCreationService service;
@@ -37,7 +37,7 @@ class TransactionCreationIntegrationTest {
     @MockitoSpyBean TransactionDAO transactionDAO;
 
     TransactionTemplate transaction;
-    UUID userId;
+    Integer userId;
     String username;
     Long checking;
     Long savings;
@@ -140,3 +140,4 @@ class TransactionCreationIntegrationTest {
                 .setParameter("id", userId).getSingleResult());
     }
 }
+

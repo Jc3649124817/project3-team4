@@ -1,7 +1,9 @@
-import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { Navigate, Outlet } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth'
+import { LoadingSpinner } from './LoadingSpinner'
 
 export function ProtectedRoute() {
-  const { token } = useAuth();
-  return token ? <Outlet /> : <Navigate to="/login" replace />;
+  const { isAuthenticated, isLoading } = useAuth()
+  if (isLoading) return <LoadingSpinner label="Checking your login..." />
+  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />
 }

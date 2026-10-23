@@ -3,11 +3,13 @@ import { Alert, Col, Container, Row } from 'react-bootstrap'
 import { StatCard } from '../components/StatCard'
 import { TransactionList } from '../components/TransactionList'
 import { LoadingSpinner } from '../components/LoadingSpinner'
-import { AccountService } from '../service/AccountService'
+import { AccountApi } from '../service/AccountApi'
+import { useAuth } from '../hooks/useAuth'
 import { useTransactions } from '../hooks/useTransactions'
 import type { Account } from '../models/models'
 
 export function DashboardPage() {
+  const { token } = useAuth()
   const [accounts, setAccounts] = useState<Account[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -21,10 +23,20 @@ export function DashboardPage() {
   // Load account balances.
   useEffect(() => {
     let active = true
+    setAccounts([])
+    setError(null)
+    setLoading(true)
 
+    if (!token) {
+      setError('Please log in to view your accounts.')
+      setLoading(false)
+      return
+    }
+
+    const requestToken = token
     async function loadAccounts() {
       try {
-        const response = await AccountService.getAccountsByUsername(1)
+        const response = await AccountApi.getAccounts(requestToken)
 
         if (!active) return
 
@@ -47,7 +59,7 @@ export function DashboardPage() {
     return () => {
       active = false
     }
-  }, [])
+  }, [token])
 
   return (
     <Container className="py-4">
@@ -86,3 +98,5 @@ export function DashboardPage() {
     </Container>
   )
 }
+
+
