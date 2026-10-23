@@ -1,51 +1,57 @@
-import { UserService } from "../service/UserService.ts";
 import type {
-    APIResponse, ChangePasswordRequest,
-    LoginRequest,
-    RegisterRequest, UpdateProfileRequest,
-    User,
-} from "../models/models.ts";
+    APIResponse, ChangePasswordRequest, LoginRequest,
+    RegisterRequest, UpdateProfileRequest, User,
+} from '../models/models'
 
-let token: string = '';
-let role: string = '';
-const BASE_URL = "http://localhost:8080/auth";
-const API_URL = "http://localhost:8080";
-const KEY = "Token";
+const BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080').replace(/\/$/, '')
+const KEY = 'Token'
 
-export const setToken = (t: string) => localStorage.setItem(KEY, t);
-export const getToken = () => localStorage.getItem(KEY);
-export const clearToken = () => localStorage.removeItem(KEY);
-// export const getToken = () => token;
-export const getRole = () => role;
+export const setToken = (token: string) => localStorage.setItem(KEY, token)
+export const getToken = () => localStorage.getItem(KEY)
+export const clearToken = () => localStorage.removeItem(KEY)
 
-export const login = async (request : LoginRequest): Promise<string> => {
-  const res = await fetch(`${BASE_URL}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(request)
-  });
-  if (!res.ok) throw new Error('Invalid credentials');
-  let tokenText = await res.text()
-  console.log(tokenText)
-  setToken(tokenText)
-  return tokenText;
-};
+export async function login(request: LoginRequest): Promise<string> {
+    const response = await fetch(`${BASE_URL}/auth`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(request),
+    })
+    if (!response.ok) throw new Error('Login failed. Check your credentials.')
+    const token = (await response.text()).trim()
+    if (!token) throw new Error('The server did not return a login token.')
+    setToken(token)
+    return token
+}
 
-export const register = async (request : RegisterRequest): Promise<any> => {
-  const res = await fetch(`${BASE_URL}/register`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(request)
-  });
-  if (!res.ok) throw new Error('Registration failed');
-  // return res.json();
-};
+export async function register(request: RegisterRequest): Promise<void> {
+    if (request.Password !== request.Password2) {
+        throw new Error('Passwords do not match.')
+    }
+    const response = await fetch(`${BASE_URL}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(request),
+    })
+    if (!response.ok) throw new Error('Registration failed. Check your information.')
+}
+
+export async function getCurrentUser(token: string): Promise<User> {
+    const response = await fetch(`${BASE_URL}/auth/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+    })
+    if (!response.ok) throw new Error('Unable to restore your login. Please log in again.')
+    return response.json()
+}
+
+export async function logout(): Promise<void> {
+    clearToken()
+}
 
 export async function changePassword(
     request: ChangePasswordRequest,
 ): Promise<APIResponse<null>> {
     try {
-        const res = await fetch(`${API_URL}/me/password`, {
+        const res = await fetch(`${BASE_URL}/me/password`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -79,7 +85,7 @@ export async function updateProfile(
     }
 
     try {
-        const res = await fetch(`${API_URL}/me`, {
+        const res = await fetch(`${BASE_URL}/me`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -95,15 +101,4 @@ export async function updateProfile(
     } catch {
         return { data: null, error: "Could not reach the server. Try again.", status: 0 };
     }
-}
-
-
-/** Checks whether the previously signed-in user still exists. */
-export function getCurrentUser(storedUsername: string): Promise<APIResponse<User>> {
-    return UserService.getUser(storedUsername ? 1 : 0);
-}
-
-export async function logout(): Promise<void> {
-  clearToken()
-    // No UserService.logout yet. A real backend would invalidate the session here.
 }
