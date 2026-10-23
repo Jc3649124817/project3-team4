@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Alert, Form, Button } from 'react-bootstrap';
 import { Input } from '../components/Input.tsx'; // Adjust the import path based on your file structure
 import { Redirect } from '../components/Redirect.tsx'
-import type { User } from '../models/models'
+
 import { type LoginError, falseLogin } from '../utils/validateLogin.ts'
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../components/ToastProvider';
@@ -44,45 +44,17 @@ function LoginForm() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const [user, setUser] = useState<User | undefined>(undefined);
+
   const [loginErrors, setLoginErrors] = useState<LoginError | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
 
-  /*
-  useEffect(() => {
-    let active = true;
 
-    async function loadAccountInfo() {
-      try {
-        const response = await UserService.logIn(1)
-
-        if (!active) return
-
-        if (response.error || !response.data) {
-          setError(response.error ?? 'Unable to load account information')
-        } else {
-          setUser(response.data)
-        }
-      } catch {
-        if (active) {
-          setError('Unable to load user. Please try again')
-        }
-      }
-    }
-
-    loadAccountInfo();
-
-    return () => {
-      active = false;
-    };
-  }, []);
-  */
 
   const handleSubmit = async (e : React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const currentUsername = username.trim();
-    const currentPassword = password.trim();
+    const currentPassword = password;
 
     const freshErrors: LoginError = {
       Username : currentUsername === "" ? "Username is not present" : "",
@@ -111,6 +83,7 @@ function LoginForm() {
 
   return (
     <Form onSubmit={handleSubmit} className="p-4 border rounded">
+      {error && <Alert variant="danger">{error}</Alert>}
       <Input 
         label="Username" 
         name="username" 
@@ -146,3 +119,4 @@ function LoginForm() {
     </Form>
   );
 }
+
