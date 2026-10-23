@@ -9,6 +9,10 @@ public class TransactionSpecs {
 
     private TransactionSpecs() {}
 
+    public static PredicateSpecification<Transaction> belongsToUser(Integer userId) {
+        return (from, cb) -> cb.equal(from.get("user").get("userId"), userId);
+    }
+
     public static PredicateSpecification<Transaction> hasType(String type) {
         if (type == null) return PredicateSpecification.unrestricted();;
         return (from, builder) -> builder.equal(from.get("type"), type);

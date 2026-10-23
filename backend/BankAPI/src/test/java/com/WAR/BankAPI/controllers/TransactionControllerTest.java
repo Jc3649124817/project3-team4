@@ -41,7 +41,7 @@ class TransactionControllerTest {
         TransactionDTO dto = transactionDTO( 1,  "deposit", "100");
 
         when(transactionService.getTransactions(anyInt(), anyString(), anyString(),
-                any(), any(), any(), any()))
+                any(), any(), any(), any(), anyString()))
                 .thenReturn(Collections.nCopies(5,dto));
 
         mockMvc.perform(get("/transactions"))
@@ -54,7 +54,7 @@ class TransactionControllerTest {
     @Test
     void testSuccessfulCallNoTransactions() throws Exception {
         when(transactionService.getTransactions(anyInt(), anyString(), anyString(),
-                any(), any(), any(), any()))
+                any(), any(), any(), any(), anyString()))
                 .thenReturn(List.of());
 
         mockMvc.perform(get("/transactions"))
@@ -68,7 +68,7 @@ class TransactionControllerTest {
         TransactionDTO dto = transactionDTO( 1,  "deposit", "100");
 
         when(transactionService.getTransactions(anyInt(), anyString(), anyString(),
-                any(), any(), any(), any()))
+                any(), any(), any(), any(), anyString()))
                 .thenReturn(Collections.nCopies(10,dto));
 
         mockMvc.perform(get("/transactions?numTransactions=10"))
@@ -83,7 +83,7 @@ class TransactionControllerTest {
         TransactionDTO dto = transactionDTO( 1,  "deposit", "100");
 
         when(transactionService.getTransactions(anyInt(), anyString(), anyString(),
-                any(), any(), any(), any()))
+                any(), any(), any(), any(), anyString()))
                 .thenReturn(Collections.nCopies(10,dto));
 
         mockMvc.perform(get("/transactions?numTransactions=10&minAmount=abc"))
@@ -96,7 +96,7 @@ class TransactionControllerTest {
         TransactionDTO dto = transactionDTO( 1,  "deposit", "100");
 
         when(transactionService.getTransactions(anyInt(), anyString(), anyString(),
-                any(), any(), any(), any()))
+                any(), any(), any(), any(), anyString()))
                 .thenThrow(new InvalidRequestException("Min amount must be equal or lower than max amount."));
 
         mockMvc.perform(get("/transactions?minAmount=100&maxAmount=10"))
@@ -109,7 +109,7 @@ class TransactionControllerTest {
         TransactionDTO dto = transactionDTO( 1,  "deposit", "100");
 
         when(transactionService.getTransactions(anyInt(), anyString(), anyString(),
-                any(), any(), any(), any()))
+                any(), any(), any(), any(), anyString()))
                 .thenThrow(new InvalidRequestException("Invalid transaction type entered."));
 
         mockMvc.perform(get("/transactions?type=all"))

@@ -4,7 +4,9 @@ import com.WAR.BankAPI.exceptions.InvalidRequestException;
 import com.WAR.BankAPI.models.Transaction;
 import com.WAR.BankAPI.DTOs.TransactionDTO;
 import com.WAR.BankAPI.models.TransactionType;
+import com.WAR.BankAPI.models.User;
 import com.WAR.BankAPI.repos.TransactionDAO;
+import com.WAR.BankAPI.repos.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.PredicateSpecification;
@@ -20,16 +22,25 @@ import java.util.stream.Stream;
 @Service
 public class TransactionService {
     private final TransactionDAO transactionDAO;
+    private final UserDAO userDAO;
 
     @Autowired
-    public TransactionService(TransactionDAO transactionDAO) {
+    public TransactionService(TransactionDAO transactionDAO, UserDAO userDAO) {
         this.transactionDAO = transactionDAO;
+        this.userDAO = userDAO;
     }
 
    public List<TransactionDTO> getTransactions( int numTransactions,
                                             String sortBy, String direction, String type,
                                             BigDecimal minAmount, BigDecimal maxAmount,
-                                            Long accountId) {
+                                            Long accountId, String username) {
+
+
+       Integer userId = this.userDAO.findByUsername(username).map(User::getUserId)
+               .orElse(null);
+       if(userId == null){
+           throw new InvalidRequestException("User not provided.");
+       }
 
        if(type != null && !TransactionType.contains(type)){
            throw new InvalidRequestException("Invalid transaction type entered.");
@@ -44,7 +55,6 @@ public class TransactionService {
            throw new InvalidRequestException("Min amount must be equal or lower than max amount.");
        }
        //TODO: Check that optional accountId belongs to the logged in user.
-
         if(type != null && !TransactionType.contains(type)){
             type = null;
         }
@@ -53,7 +63,8 @@ public class TransactionService {
                hasType(type),
                amountAtLeast(minAmount),
                amountAtMost(maxAmount),
-               involvesAccount(accountId)
+               involvesAccount(accountId),
+               belongsToUser(userId)
        ).filter(Objects::nonNull).toList();
 
 
