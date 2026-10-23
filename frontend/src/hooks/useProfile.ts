@@ -16,7 +16,7 @@ export function useProfile() {
 
         setSaving(true);
         try {
-            const res = await authService.updateProfile(user, changes);
+            const res = await authService.updateProfile(changes);
 
             if (!res.data) {
                 showToast(res.status === 400 ? 'warning' : 'danger',
@@ -26,7 +26,6 @@ export function useProfile() {
 
             updateUser(res.data);
             showToast('success', 'Profile updated successfully.');
-
             return true;
         } catch {
             showToast('danger', 'Could not reach the server. Try again.');
@@ -35,5 +34,6 @@ export function useProfile() {
             setSaving(false);
         }
     }
+
     return { save, saving };
 }
