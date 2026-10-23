@@ -6,10 +6,14 @@ import { ContactForm } from '../components/ContactForm';
 import {PasswordForm} from "../components/PasswordForm.tsx";
 
 export function UserProfilePage() {
-    const { user } = useAuth();
+    const { isAuthenticated, isLoading } = useAuth();
 
-    if (!user) {
+    if (isLoading) {
         return <LoadingSpinner label="Loading profile..." />;
+    }
+
+    if (!isAuthenticated) {
+        return null;
     }
 
     return (
