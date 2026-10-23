@@ -9,6 +9,7 @@ import type {
 let token: string = '';
 let role: string = '';
 const BASE_URL = "http://localhost:8080/auth";
+const API_URL = "http://localhost:8080";
 const KEY = "Token";
 
 export const setToken = (t: string) => localStorage.setItem(KEY, t);
@@ -40,28 +41,62 @@ export const register = async (request : RegisterRequest): Promise<any> => {
   // return res.json();
 };
 
-export function changePassword(request: ChangePasswordRequest): Promise<APIResponse<null>> {
-    if (request.CurrentPassword !== "apple123") {
-        return UserService.changePassword(0);
+export async function changePassword(
+    request: ChangePasswordRequest,
+): Promise<APIResponse<null>> {
+    try {
+        const res = await fetch(`${API_URL}/me/password`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${getToken()}`,
+            },
+            body: JSON.stringify(request),
+        });
+
+        if (!res.ok) {
+            return { data: null, error: (await res.text()) || "Unable to change password.", status: res.status };
+        }
+        return { data: null, error: null, status: res.status };
+    } catch {
+        return { data: null, error: "Could not reach the server. Try again.", status: 0 };
     }
-    return UserService.changePassword(1);
 }
 
-export function updateProfile (
-    currentUser: User,
+export async function updateProfile(
     changes: UpdateProfileRequest,
-    ): Promise<APIResponse<User>> {
-        const { FirstName, LastName, Email, PhoneNumber } = changes;
+): Promise<APIResponse<User>> {
+    const { FirstName, LastName, Email, PhoneNumber } = changes;
 
-        const badFirstName = FirstName !== undefined && FirstName.trim() === "";
-        const badLastName = LastName !== undefined && LastName.trim() === "";
-        const badEmail = Email !== undefined && !Email.includes("@");
-        const badPhoneNumber = PhoneNumber !== undefined && PhoneNumber.trim() === "";
+    const invalid =
+        (FirstName !== undefined && FirstName.trim() === "") ||
+        (LastName !== undefined && LastName.trim() === "") ||
+        (Email !== undefined && !Email.includes("@")) ||
+        (PhoneNumber !== undefined && PhoneNumber.trim() === "");
 
-        const invalid = badFirstName || badLastName || badEmail || badPhoneNumber;
+    if (invalid) {
+        return { data: null, error: "Failed Profile Update: Invalid changes attempted.", status: 400 };
+    }
 
-        return UserService.updateUser(invalid ? 0 : 1, currentUser, changes);
+    try {
+        const res = await fetch(`${API_URL}/me`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${getToken()}`,
+            },
+            body: JSON.stringify(changes),
+        });
+
+        if (!res.ok) {
+            return { data: null, error: (await res.text()) || "Unable to save changes.", status: res.status };
+        }
+        return { data: await res.json(), error: null, status: res.status };
+    } catch {
+        return { data: null, error: "Could not reach the server. Try again.", status: 0 };
+    }
 }
+
 
 /** Checks whether the previously signed-in user still exists. */
 export function getCurrentUser(storedUsername: string): Promise<APIResponse<User>> {
